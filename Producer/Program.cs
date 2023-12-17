@@ -23,7 +23,7 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
+    var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
@@ -36,24 +36,38 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
-var values = new[] {"value1", "value2"};
-app.MapGet("/values", () => 
-{
-    return values;
-})
-.WithName("GetValues")
+app.MapGroup("/values")
+.MapValuesApi()
+.WithTags("Values Api")
 .WithOpenApi();
 
-app.MapGet("/values/{id:int}", (int id)=> 
-{
-    return values[id];
-})
-.WithName("GetValue")
-.WithOpenApi();
 
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}
+
+record Payload() {}
+
+
+public static class RouteBuilderExtension
+{
+    public static RouteGroupBuilder MapValuesApi(this RouteGroupBuilder group)
+    {
+        group.MapGet("/", () =>
+        {
+            return new[] { "value1", "value2" };
+        });
+
+        group.MapGet("/{id:int}", (int id) =>
+        {
+            return "value";
+        });
+
+        group.MapPost("/", (Payload payload) => Results.Ok(new {success= true}));
+
+        return group;
+    }
 }
