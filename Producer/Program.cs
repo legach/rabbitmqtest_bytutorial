@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -66,7 +68,10 @@ public static class RouteBuilderExtension
             return "value";
         });
 
-        group.MapPost("/", (Payload payload) => Results.Ok(new {success= true}));
+        group.MapPost("/", ([FromBody]string payload) => 
+        {
+            return Results.Ok(new {success= true});
+        });
 
         return group;
     }
