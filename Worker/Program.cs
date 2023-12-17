@@ -2,7 +2,7 @@
 using System.Text;
 using Newtonsoft.Json;
 
-const string Host = "https://localhost:7268";
+const string Host = "http://producer:8080";
 
 Console.WriteLine("Hello, World!");
 await PostMessage("test message");

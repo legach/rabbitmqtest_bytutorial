@@ -1,0 +1,17 @@
+services:
+  producer:
+    image: my_producer:latest
+    ports:
+      - "5054:8080"
+      - "7268:443"
+    build: 
+      context: ./Producer
+      dockerfile: Dockerfile
+    
+  worker:
+    image: my_worker:latest
+    depends_on:
+      - producer
+    build:
+      context: ./Worker
+      dockerfile: Dockerfile
