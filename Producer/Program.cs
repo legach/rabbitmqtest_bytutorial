@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Producer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<IMessageService, MessageService>();
 
 var app = builder.Build();
 
@@ -68,9 +70,11 @@ public static class RouteBuilderExtension
             return "value";
         });
 
-        group.MapPost("/", ([FromBody]string payload) => 
+        group.MapPost("/", ([FromBody]string payload, IMessageService messageService) => 
         {
-            return Results.Ok(new {success= true});
+            System.Console.WriteLine($"received a Post: {payload}");
+            messageService.Enqueue(payload);
+            return Results.Ok();
         });
 
         return group;

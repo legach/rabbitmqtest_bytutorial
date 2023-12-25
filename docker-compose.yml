@@ -1,6 +1,8 @@
 services:
   producer:
     image: my_producer:latest
+    depends_on:
+      - rabbitmq
     ports:
       - "5054:8080"
       - "7268:443"
@@ -12,6 +14,21 @@ services:
     image: my_worker:latest
     depends_on:
       - producer
+      - rabbitmq
     build:
       context: ./Worker
       dockerfile: Dockerfile
+  
+  rabbitmq: #login guest:guest
+    image: rabbitmq:management
+    hostname: "rabbitmq"
+    labels:
+      - NAME=rabbitmq
+    ports:
+      - "4369:4369"
+      - "5671:5671"
+      - "5672:5672"
+      - "15671:15671"
+      - "15672:15672"
+      - "25672:25672"
+
